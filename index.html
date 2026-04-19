@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paco, siempre confié en ti, eres el mejor - 2026</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #16222A, #3A6073);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3.5rem;
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 90%;
+            width: 600px;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: -webkit-linear-gradient(#4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            opacity: 0.8;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .victims-counter {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: #ff6b6b;
+            background: rgba(0, 0, 0, 0.25);
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        audio {
+            display: block;
+            margin: 0 auto 2rem auto;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .countdown {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .time-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 20px;
+            border-radius: 12px;
+            min-width: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            color: #4facfe;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 2rem; }
+            h1 { font-size: 1.9rem; }
+            .number { font-size: 1.8rem; }
+            .time-box { min-width: 65px; padding: 10px; }
+            .label { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Paco, siempre confié en ti, eres el mejor</h1>
+        <p class="subtitle">28 de Julio de 2026</p>
+
+        <div class="victims-counter">
+            Víctimas: <span id="victims">1</span>
+        </div>
+
+        <audio controls autoplay loop>
+            <source src="2001 - CLÁSICO [VIDEO OFICIAL] (mp3cut.net).mp3" type="audio/mpeg">
+            Tu navegador no soporta el audio.
+        </audio>
+        
+        <div class="countdown">
+            <div class="time-box">
+                <span class="number" id="days">00</span>
+                <span class="label">Días</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="hours">00</span>
+                <span class="label">Horas</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="minutes">00</span>
+                <span class="label">Mins</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="seconds">00</span>
+                <span class="label">Segs</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const targetDate = new Date('July 28, 2026 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+
+            const second = 1000;
+            const minute = second * 60;
+            const hour = minute * 60;
+            const day = hour * 24;
+
+            if (gap < 0) {
+                document.querySelector('.container').innerHTML = `
+                    <h1>¡Paco lo ha conseguido!</h1>
+                    <p class="subtitle">Paco, siempre confié en ti, eras el mejor.</p>
+                    <div class="victims-counter">Víctimas: 1</div>
+                `;
+                return;
+            }
+
+            const d = Math.floor(gap / day);
+            const h = Math.floor((gap % day) / hour);
+            const m = Math.floor((gap % hour) / minute);
+            const s = Math.floor((gap % minute) / second);
+
+            document.getElementById('days').innerText = d;
+            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+            document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+            document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+
+</body>
+</html>
