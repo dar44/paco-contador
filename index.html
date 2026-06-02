@@ -109,6 +109,151 @@
             .time-box { min-width: 65px; padding: 10px; }
             .label { font-size: 0.7rem; }
         }
+
+        .btn-stop {
+            margin-top: 2rem;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, #e52d27, #b31217);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(229,45,39,0.45);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+        }
+        .btn-stop:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 10px 28px rgba(229,45,39,0.6);
+        }
+        .btn-stop.paused {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            box-shadow: 0 6px 20px rgba(56,239,125,0.4);
+        }
+        .btn-stop.paused:hover {
+            box-shadow: 0 10px 28px rgba(56,239,125,0.6);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(6px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: linear-gradient(160deg, #1a2a3a, #0f1e2d);
+            border: 1px solid rgba(79,172,254,0.3);
+            border-radius: 20px;
+            padding: 2.5rem 2.5rem 2rem;
+            text-align: center;
+            width: 340px;
+            max-width: 90vw;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            animation: modalIn 0.25s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .modal-box h2 {
+            margin: 0 0 0.4rem;
+            font-size: 1.5rem;
+            background: -webkit-linear-gradient(#4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .modal-box p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin: 0 0 1.4rem;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(79,172,254,0.4);
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            font-size: 1.05rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        .modal-input:focus {
+            border-color: #4facfe;
+        }
+        .modal-input.error {
+            border-color: #e52d27;
+            animation: shake 0.3s;
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .modal-error {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            min-height: 1.2em;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.4rem;
+            justify-content: center;
+        }
+        .btn-confirm {
+            padding: 10px 26px;
+            border-radius: 50px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #e52d27, #b31217);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(229,45,39,0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-confirm:hover { transform: scale(1.05); }
+        .btn-cancel {
+            padding: 10px 26px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #fff;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .btn-cancel:hover { border-color: rgba(255,255,255,0.5); transform: scale(1.05); }
+
+        .paused-badge {
+            display: none;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #38ef7d;
+            letter-spacing: 1px;
+            font-weight: 600;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .paused-badge.visible { display: block; }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
     </style>
 </head>
 <body>
@@ -144,10 +289,36 @@
                 <span class="label">Segs</span>
             </div>
         </div>
+
+        <button class="btn-stop" id="btnStop" onclick="openModal()">⏹ Parar contador</button>
+        <div class="paused-badge" id="pausedBadge">⏸ CONTADOR PAUSADO</div>
+    </div>
+
+    <!-- Modal contraseña -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h2>🔒 Acceso restringido</h2>
+            <p>Introduce la contraseña para parar el contador</p>
+            <input
+                class="modal-input"
+                id="passwordInput"
+                type="password"
+                placeholder="Contraseña..."
+                onkeydown="if(event.key==='Enter') confirmStop()"
+                autocomplete="off"
+            />
+            <div class="modal-error" id="modalError"></div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-confirm" onclick="confirmStop()">Confirmar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const targetDate = new Date('July 28, 2026 00:00:00').getTime();
+        let intervalId = null;
+        let isPaused = false;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -178,8 +349,66 @@
             document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
         }
 
-        setInterval(updateCountdown, 1000);
+        intervalId = setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        /* ── Modal contraseña ── */
+        function openModal() {
+            if (isPaused) {
+                // Si ya está pausado, el botón reanuda directamente
+                resumeCountdown();
+                return;
+            }
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('modalError').textContent = '';
+            document.getElementById('passwordInput').classList.remove('error');
+            setTimeout(() => document.getElementById('passwordInput').focus(), 50);
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function confirmStop() {
+            const pwd = document.getElementById('passwordInput').value;
+            if (pwd === 'Elicia') {
+                closeModal();
+                pauseCountdown();
+            } else {
+                const input = document.getElementById('passwordInput');
+                const err   = document.getElementById('modalError');
+                input.classList.remove('error');
+                void input.offsetWidth; // reinicia animación
+                input.classList.add('error');
+                err.textContent = '❌ Contraseña incorrecta. Inténtalo de nuevo.';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function pauseCountdown() {
+            clearInterval(intervalId);
+            isPaused = true;
+            const btn = document.getElementById('btnStop');
+            btn.textContent = '▶ Reanudar contador';
+            btn.classList.add('paused');
+            document.getElementById('pausedBadge').classList.add('visible');
+        }
+
+        function resumeCountdown() {
+            intervalId = setInterval(updateCountdown, 1000);
+            isPaused = false;
+            const btn = document.getElementById('btnStop');
+            btn.textContent = '⏹ Parar contador';
+            btn.classList.remove('paused');
+            document.getElementById('pausedBadge').classList.remove('visible');
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
     </script>
 
 </body>
